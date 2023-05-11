@@ -5,14 +5,17 @@ import "./ChatApp.css";
 function ChatApp() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
-
+  const [end, setEnd] = useState('')
   const sendMessage = async () => {
     // setChat([...chat, { message, sender: 'user' }]);
     // setMessage('');
     const response = await axios.post('http://127.0.0.1:8000/api/', { message });
     console.log(response)
+    let stat = response.data.status;
+    console.log(stat);
     setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
     setMessage('');
+    setEnd(response.data.status)
     setTimeout(()=>{var chatm = document.getElementById("chatm");
     chatm.scrollTop = chatm.scrollHeight;}, 200);
     
@@ -23,6 +26,15 @@ function ChatApp() {
       sendMessage(e);
     }
   };
+
+  const restart = async () => {
+    setChat([])
+    setEnd('')
+    const response = await axios.post('http://127.0.0.1:8000/api/', { "message":"restart" });
+    console.log(response)
+    setChat([{ message: response.data.response, sender: 'bot' }]);
+    setMessage('');
+  }
 
   useEffect(()=>{
     async function fetchMyAPI() {
@@ -56,7 +68,12 @@ function ChatApp() {
           </div>
         ))}
       </div>
-      <div className="chat-input">
+      {end === "end" && <div className="restart">
+        <button onClick={restart}>شروع مجدد</button>
+      </div>}
+
+      { end !== "end" &&
+        <div className="chat-input">
         <input
           type="text"
           value={message}
@@ -64,7 +81,9 @@ function ChatApp() {
           onKeyDown={(e) => handleChange(e)}
         />
         <button onClick={sendMessage}>ارسال پیام</button>
-      </div>
+        </div>
+      }
+      
     </div>
   );
 }

@@ -11,17 +11,18 @@ function ChatApp() {
   const sendMessage = async () => {
     // setChat([...chat, { message, sender: 'user' }]);
     // setMessage('');
-    const response = await axios.post('http://127.0.0.1:8000/api/', { message });
-    console.log(response)
-    let stat = response.data.status;
-    console.log(stat);
-    setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
-    setMessage('');
-    setEnd(response.data.status)
-    setTimeout(()=>{var chatm = document.getElementById("chatm");
-    chatm.scrollTop = chatm.scrollHeight;}, 200);
-    setButtons(response.data.buttons)
-    
+    if (message.length > 0){
+      const response = await axios.post('http://127.0.0.1:8000/api/', { message });
+      console.log(response)
+      let stat = response.data.status;
+      console.log(stat);
+      setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
+      setMessage('');
+      setEnd(response.data.status)
+      setTimeout(()=>{var chatm = document.getElementById("chatm");
+      chatm.scrollTop = chatm.scrollHeight;}, 200);
+      setButtons(response.data.buttons)
+    }
   };
 
 

@@ -104,6 +104,7 @@ body {
     display: flex;
     justify-content: space-around;
     margin-bottom: 0.2rem;
+    direction: rtl;
     
   }
 

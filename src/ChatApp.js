@@ -5,7 +5,9 @@ import "./ChatApp.css";
 function ChatApp() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
-  const [end, setEnd] = useState('')
+  const [end, setEnd] = useState('');
+  const [buttons, setButtons] = useState([]);
+
   const sendMessage = async () => {
     // setChat([...chat, { message, sender: 'user' }]);
     // setMessage('');
@@ -18,8 +20,10 @@ function ChatApp() {
     setEnd(response.data.status)
     setTimeout(()=>{var chatm = document.getElementById("chatm");
     chatm.scrollTop = chatm.scrollHeight;}, 200);
+    setButtons(response.data.buttons)
     
   };
+
 
   const handleChange = (e) => {
     if (e.key === "Enter") {
@@ -34,6 +38,22 @@ function ChatApp() {
     console.log(response)
     setChat([{ message: response.data.response, sender: 'bot' }]);
     setMessage('');
+    setButtons(response.data.buttons)
+  }
+
+  const setShortcut = async (m) => {
+    console.log(m);
+    const response = await axios.post('http://127.0.0.1:8000/api/', { "message": m });
+    console.log(response)
+    let stat = response.data.status;
+    console.log(stat);
+    setChat([...chat, { message: m, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
+    setMessage('');
+    setEnd(response.data.status)
+    setTimeout(()=>{var chatm = document.getElementById("chatm");
+    chatm.scrollTop = chatm.scrollHeight;}, 200);
+    setButtons(response.data.buttons)
+
   }
 
   useEffect(()=>{
@@ -43,11 +63,13 @@ function ChatApp() {
       console.log(response)
       setChat([...chat, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
+      setButtons(response.data.buttons)
     }
 
     fetchMyAPI()
    
 }, []);
+
 
   return (
     <div className="chat-container">
@@ -65,14 +87,31 @@ function ChatApp() {
                 <b>SAT:</b> {item.message}
               </div>
             )}
+            
           </div>
         ))}
+        
       </div>
       {end === "end" && <div className="restart">
         <button onClick={restart}>شروع مجدد</button>
       </div>}
 
       { end !== "end" &&
+      <>
+      <div className='button-group'>
+        {
+          buttons.length &&
+          buttons.map((button, button_id)=> (
+            <input 
+            className='short-button'
+            type="button"
+            value={button} 
+            key={button_id} 
+            onClick={(e) => setShortcut(e.target.value)}
+             />
+          ))
+        }
+        </div>
         <div className="chat-input">
         <input
           type="text"
@@ -82,6 +121,7 @@ function ChatApp() {
         />
         <button onClick={sendMessage}>ارسال پیام</button>
         </div>
+        </>
       }
       
     </div>

@@ -1,3 +1,8 @@
+*{
+    font-family: Vazirmatn, sans-serif;
+
+}
+
 body {
     background-color: #e2e2e2;
 
@@ -86,6 +91,50 @@ body {
     cursor: pointer;
   }
   
+  .restart{
+    text-align: center;
+    margin: auto;
+    margin-bottom: 1rem;
+  }
+
+  .button-group {
+    text-align: center;
+    width: 70%;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 0.2rem;
+    
+  }
+
+  .button-group input{
+    width: 100%;
+    margin: 10px;
+    padding: 5px 0;
+    font-size: small;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #4398f3;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .restart button{
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 2rem;
+    border-radius: .3rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
   @media screen and (max-width: 768px) {
     .chat-message-bubble {
       max-width: 60%;

@@ -11,6 +11,7 @@ body {
     width: 70vh;
     margin: auto;
     background-color: #fff;
+    white-space: pre-wrap;
     
   }
 

@@ -13,6 +13,9 @@ function ChatApp() {
     console.log(response)
     setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
     setMessage('');
+    setTimeout(()=>{var chatm = document.getElementById("chatm");
+    chatm.scrollTop = chatm.scrollHeight;}, 200);
+    
   };
 
   const handleChange = (e) => {
@@ -36,8 +39,8 @@ function ChatApp() {
 
   return (
     <div className="chat-container">
-        <div className="chat-banner">satbot</div>
-      <div className="chat-messages">
+        <div className="chat-banner">sat bot</div>
+      <div className="chat-messages" id="chatm">
         {chat.map((item, index) => (
           <div key={index} className={`chat-message ${item.sender === 'user' ? 'chat-message-user' : ''}`}>
             {item.sender === 'user' && (
@@ -60,7 +63,7 @@ function ChatApp() {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => handleChange(e)}
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={sendMessage}>ارسال پیام</button>
       </div>
     </div>
   );

@@ -100,7 +100,7 @@ function ChatApp() {
       <>
       <div className='button-group'>
         {
-          buttons.length &&
+          buttons.length ?
           buttons.map((button, button_id)=> (
             <input 
             className='short-button'
@@ -109,7 +109,8 @@ function ChatApp() {
             key={button_id} 
             onClick={(e) => setShortcut(e.target.value)}
              />
-          ))
+          )):
+          <></>
         }
         </div>
         <div className="chat-input">

@@ -41,8 +41,6 @@ function ChatApp() {
         setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
       setEnd(response.data)
-      setTimeout(()=>{var chatm = document.getElementById("chatm");
-      chatm.scrollTop = chatm.scrollHeight;}, 200);
       setButtons(response.data.buttons)
     }
   };

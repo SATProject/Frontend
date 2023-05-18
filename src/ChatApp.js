@@ -22,6 +22,7 @@ function ChatApp() {
   const manageProtocol = (status, details) => {
     let title = details.response.title
     setTitle(title)
+    console.log(title);
     details = details.response.details;
     setProtocol(details);
     let string = "";
@@ -109,7 +110,7 @@ function ChatApp() {
             {
               item.sender === 'protocol' && (
                 <div className="chat-message-bubble bot">
-                  <b>{item.message[0]}</b> {item.message}
+                  <b>{item.message.substring(0, item.message.indexOf("\n"))}</b> {item.message.replace(`${title}`, "")}
               </div>
               )
             }

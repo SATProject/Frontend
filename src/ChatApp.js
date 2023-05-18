@@ -11,7 +11,6 @@ function ChatApp() {
   const [title, setTitle] = useState('');
 
   const isProtocol = (res)=> {
-    console.log(res.response)
     if (res.response === "لطفا تمرین زیر رو انجام بده."){
       return true;
       
@@ -35,7 +34,6 @@ function ChatApp() {
   const sendMessage = async () => {
     if (message.length > 0){
       const response = await axios.post('http://127.0.0.1:8000/api/', { message });
-      console.log(response)
       isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
         setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
@@ -62,7 +60,6 @@ function ChatApp() {
 
   const setShortcut = async (m) => {
     const response = await axios.post('http://127.0.0.1:8000/api/', { "message": m });
-    console.log(response)
       isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
         setChat([...chat, { message: m, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
     setMessage('');
@@ -95,7 +92,7 @@ function ChatApp() {
           <div key={index} className={`chat-message ${item.sender === 'user' ? 'chat-message-user' : ''}`}>
             {item.sender === 'user' && (
               <div className="chat-message-bubble  you">
-                <b></b> {item.message}
+                 {item.message}
               </div>
             )}
             {item.sender === 'bot' && (

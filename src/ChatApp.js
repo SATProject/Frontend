@@ -7,18 +7,39 @@ function ChatApp() {
   const [chat, setChat] = useState([]);
   const [end, setEnd] = useState('');
   const [buttons, setButtons] = useState([]);
+  const [protocol, setProtocol] = useState([]);
+  const [title, setTitle] = useState('');
+
+  const isProtocol = (res)=> {
+    console.log(res.response)
+    if (res.response === "لطفا تمرین زیر رو انجام بده."){
+      return true;
+      
+    }
+    return false;
+  }
+
+  const manageProtocol = (status, details) => {
+    let title = details.response.title
+    setTitle(title)
+    details = details.response.details;
+    setProtocol(details);
+    let string = "";
+    string += title + '\n\n';
+    for (let i = 0; i < details.length; i+=1){
+      string += `✅ ${details[i]}\n\n`;
+    }
+    setChat([...chat, { message: status, sender: 'bot' }, { message: string, sender: 'protocol' }])
+  }
 
   const sendMessage = async () => {
-    // setChat([...chat, { message, sender: 'user' }]);
-    // setMessage('');
     if (message.length > 0){
       const response = await axios.post('http://127.0.0.1:8000/api/', { message });
       console.log(response)
-      let stat = response.data.status;
-      console.log(stat);
-      setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
+      isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
+        setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
-      setEnd(response.data.status)
+      setEnd(response.data)
       setTimeout(()=>{var chatm = document.getElementById("chatm");
       chatm.scrollTop = chatm.scrollHeight;}, 200);
       setButtons(response.data.buttons)
@@ -36,19 +57,16 @@ function ChatApp() {
     setChat([])
     setEnd('')
     const response = await axios.post('http://127.0.0.1:8000/api/', { "message":"restart" });
-    console.log(response)
     setChat([{ message: response.data.response, sender: 'bot' }]);
     setMessage('');
     setButtons(response.data.buttons)
   }
 
   const setShortcut = async (m) => {
-    console.log(m);
     const response = await axios.post('http://127.0.0.1:8000/api/', { "message": m });
     console.log(response)
-    let stat = response.data.status;
-    console.log(stat);
-    setChat([...chat, { message: m, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
+      isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
+        setChat([...chat, { message: m, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
     setMessage('');
     setEnd(response.data.status)
     setTimeout(()=>{var chatm = document.getElementById("chatm");
@@ -59,7 +77,6 @@ function ChatApp() {
 
   useEffect(()=>{
     async function fetchMyAPI() {
-      console.log('i fire once');
       const response = await axios.post('http://127.0.0.1:8000/api/', { "message":"empty" });
       console.log(response)
       setChat([...chat, { message: response.data.response, sender: 'bot' }]);
@@ -80,14 +97,22 @@ function ChatApp() {
           <div key={index} className={`chat-message ${item.sender === 'user' ? 'chat-message-user' : ''}`}>
             {item.sender === 'user' && (
               <div className="chat-message-bubble  you">
-                <b>You:</b> {item.message}
+                <b></b> {item.message}
               </div>
             )}
             {item.sender === 'bot' && (
-              <div className="chat-message-bubble">
-                <b>SAT:</b> {item.message}
+              <div className="chat-message-bubble bot">
+                <b></b> {item.message}
               </div>
             )}
+
+            {
+              item.sender === 'protocol' && (
+                <div className="chat-message-bubble bot">
+                  <b>{item.message[0]}</b> {item.message}
+              </div>
+              )
+            }
             
           </div>
         ))}

@@ -51,11 +51,22 @@ body {
   }
   
   .chat-message-bubble {
-    background-color: #eee;
+    background-color: rgb(238, 238, 238);
     padding: 0.5rem;
     border-radius: 1rem;
-    max-width: 80%;
-    
+    max-width: fit-content;
+    direction: rtl;
+  }
+
+  .bot {
+    width: 80%;
+  }
+
+  .you{
+    background: #3a50b4;
+    color: #fff;
+    width: 80%
+    /* background: linear-gradient(90deg, rgba(58,80,180,1) 39%, rgba(170,29,253,1) 98%);; */
   }
   
   .chat-message-bubble-user {

@@ -18,6 +18,15 @@ function ChatApp() {
     return false;
   }
 
+  const manageMessages = (response) => {
+    isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
+        setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
+
+    setMessage('');
+    setEnd(response.data)
+    setButtons(response.data.buttons)
+  }
+
   const manageProtocol = (status, details) => {
     let title = details.response.title
     setTitle(title)

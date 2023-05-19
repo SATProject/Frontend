@@ -27,13 +27,13 @@ function ChatApp() {
     return string;
   }
 
-  const manageProtocol = (status, details) => {
+  const manageProtocol = (message, status, details) => {
     let title = details.response.title
     setTitle(title)
     details = details.response.details;
     setProtocol(details);
     let text = createProtoclText(title, details);
-    setChat([...chat, { message: status, sender: 'bot' }, { message: text, sender: 'protocol' }])
+    setChat([...chat, { message, sender: 'user' }, { message: status, sender: 'bot' }, { message: text, sender: 'protocol' }])
   }
 
   const scrollDown = () => {
@@ -44,7 +44,7 @@ function ChatApp() {
   const sendMessage = async () => {
     if (message.length > 0){
       const response = await axios.post('http://127.0.0.1:8000/api/', { message });
-      isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
+      isProtocol(response.data.response) ? manageProtocol(message, response.data.response.response, response.data) : 
         setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
       setEnd(response.data);
@@ -71,7 +71,7 @@ function ChatApp() {
 
   const setShortcut = async (m) => {
     const response = await axios.post('http://127.0.0.1:8000/api/', { "message": m });
-      isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
+      isProtocol(response.data.response) ? manageProtocol(m, response.data.response.response, response.data) : 
         setChat([...chat, { message: m, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
     setMessage('');
     setEnd(response.data.status);

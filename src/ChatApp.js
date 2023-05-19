@@ -18,17 +18,27 @@ function ChatApp() {
     return false;
   }
 
-  const manageProtocol = (status, details) => {
-    let title = details.response.title
-    setTitle(title)
-    details = details.response.details;
-    setProtocol(details);
+  const createProtoclText = (title, details) => {
     let string = "";
     string += title + '\n\n';
     for (let i = 0; i < details.length; i+=1){
       string += `✅ ${details[i]}\n\n`;
     }
-    setChat([...chat, { message: status, sender: 'bot' }, { message: string, sender: 'protocol' }])
+    return string;
+  }
+
+  const manageProtocol = (status, details) => {
+    let title = details.response.title
+    setTitle(title)
+    details = details.response.details;
+    setProtocol(details);
+    let text = createProtoclText(title, details);
+    setChat([...chat, { message: status, sender: 'bot' }, { message: text, sender: 'protocol' }])
+  }
+
+  const scrollDown = () => {
+    setTimeout(()=>{var chatm = document.getElementById("chatm");
+    chatm.scrollTop = chatm.scrollHeight;}, 200);
   }
 
   const sendMessage = async () => {
@@ -37,8 +47,9 @@ function ChatApp() {
       isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
         setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
-      setEnd(response.data)
-      setButtons(response.data.buttons)
+      setEnd(response.data);
+      setButtons(response.data.buttons);
+      scrollDown();
     }
   };
 
@@ -55,7 +66,7 @@ function ChatApp() {
     const response = await axios.post('http://127.0.0.1:8000/api/', { "message":"restart" });
     setChat([{ message: response.data.response, sender: 'bot' }]);
     setMessage('');
-    setButtons(response.data.buttons)
+    setButtons(response.data.buttons);
   }
 
   const setShortcut = async (m) => {
@@ -63,11 +74,9 @@ function ChatApp() {
       isProtocol(response.data.response) ? manageProtocol(response.data.response.response, response.data) : 
         setChat([...chat, { message: m, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
     setMessage('');
-    setEnd(response.data.status)
-    setTimeout(()=>{var chatm = document.getElementById("chatm");
-    chatm.scrollTop = chatm.scrollHeight;}, 200);
-    setButtons(response.data.buttons)
-
+    setEnd(response.data.status);
+    setButtons(response.data.buttons);
+    scrollDown();
   }
 
   useEffect(()=>{
@@ -76,10 +85,10 @@ function ChatApp() {
       console.log(response)
       setChat([...chat, { message: response.data.response, sender: 'bot' }]);
       setMessage('');
-      setButtons(response.data.buttons)
+      setButtons(response.data.buttons);
     }
 
-    fetchMyAPI()
+    fetchMyAPI();
    
 }, []);
 

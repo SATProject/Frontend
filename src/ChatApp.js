@@ -92,8 +92,27 @@ function ChatApp() {
    
 }, []);
 
-const typeSpeed = 1000;
+const callProtocol = (title, item) => {
   return (
+    <TypeAnimation
+                  sequence={[
+                    item.message.replace(`${title}`, ""),
+                    1000,
+
+                    () => {
+                      scrollDown();
+                    }
+                  ]}
+                  deletionSpeed={60}
+                  wrapper="span"
+                  cursor={false}
+                  repeat={Infinity}
+                  style={{ display: 'inline-block' }}
+                />
+  )
+}
+
+return (
     <div className="chat-container">
         <div className="chat-banner">sat bot</div>
       <div className="chat-messages" id="chatm">
@@ -115,6 +134,7 @@ const typeSpeed = 1000;
                       scrollDown()
                     }
                   ]}
+                  deletionSpeed={80}
                   wrapper="span"
                   cursor={false}
                   repeat={Infinity}
@@ -135,25 +155,13 @@ const typeSpeed = 1000;
                       scrollDown();
                     }
                   ]}
+                  deletionSpeed={60}
                   wrapper="span"
                   cursor={false}
                   repeat={Infinity}
                   style={{  fontWeight: 'bold' }}
                 />
-                <TypeAnimation
-                  sequence={[
-                    item.message.replace(`${title}`, ""),
-                    1000,
-
-                    () => {
-                      scrollDown();
-                    }
-                  ]}
-                  wrapper="span"
-                  cursor={false}
-                  repeat={Infinity}
-                  style={{ display: 'inline-block' }}
-                />
+                {setProtocol(title, item)}                
               </div>
               )
             }

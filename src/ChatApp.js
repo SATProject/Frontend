@@ -41,43 +41,42 @@ function ChatApp() {
     chatm.scrollTop = chatm.scrollHeight;}, 200);
   }
 
-  const sendMessage = async () => {
-    if (message.length > 0){
-      const response = await axios.post('http://127.0.0.1:8000/api/', { message });
-      isProtocol(response.data.response) ? manageProtocol(message, response.data.response.response, response.data) : 
-        setChat([...chat, { message, sender: 'user' }, { message: response.data.response, sender: 'bot' }]);
-      setMessage('');
-      setEnd(response.data);
-      setButtons(response.data.buttons);
-      scrollDown();
-    }
-  };
-
-
   const handleChange = (e) => {
     if (e.key === "Enter") {
       sendMessage(e);
     }
   };
 
-  const restart = async () => {
-    setChat([])
-    setEnd('')
-    const response = await axios.post('http://127.0.0.1:8000/api/', { "message":"restart" });
-    setChat([{ message: response.data.response, sender: 'bot' }]);
-    setMessage('');
-    setButtons(response.data.buttons);
-  }
+  const messageSet = async (message) => {
+    const response = await axios.post('http://127.0.0.1:8000/api/', { "message": message });
+    if (message === "restart") {
+        setChat([{ message: response.data.response, sender: 'bot' }]);
+    } else {
+      isProtocol(response.data.response) ? manageProtocol(message, response.data.response.response, response.data) : 
+        setChat([...chat, { message: message, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
 
-  const setShortcut = async (m) => {
-    const response = await axios.post('http://127.0.0.1:8000/api/', { "message": m });
-      isProtocol(response.data.response) ? manageProtocol(m, response.data.response.response, response.data) : 
-        setChat([...chat, { message: m, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
+      setEnd(response.data.status);
+    }
     setMessage('');
-    setEnd(response.data.status);
     setButtons(response.data.buttons);
     scrollDown();
   }
+
+  const restart = () => {
+    setChat([])
+    setEnd('')
+    messageSet("restart")
+  }
+
+  const setShortcut = (message) => {
+    messageSet(message);
+  }
+
+    const sendMessage = async () => {
+    if (message.length > 0){
+      messageSet(message)
+    }
+  };
 
   useEffect(()=>{
     async function fetchMyAPI() {

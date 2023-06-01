@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TypeAnimation } from 'react-type-animation';
 import axios from 'axios';
 import "./ChatApp.css";
 
@@ -72,7 +73,7 @@ function ChatApp() {
     messageSet(message);
   }
 
-    const sendMessage = async () => {
+    const sendMessage = () => {
     if (message.length > 0){
       messageSet(message)
     }
@@ -91,7 +92,7 @@ function ChatApp() {
    
 }, []);
 
-
+const typeSpeed = 1000;
   return (
     <div className="chat-container">
         <div className="chat-banner">sat bot</div>
@@ -105,14 +106,54 @@ function ChatApp() {
             )}
             {item.sender === 'bot' && (
               <div className="chat-message-bubble bot">
-                <b></b> {item.message}
+                <TypeAnimation
+                  sequence={[
+                    item.message, 
+                    1000, 
+
+                    () => {
+                      scrollDown()
+                    }
+                  ]}
+                  wrapper="span"
+                  cursor={false}
+                  repeat={Infinity}
+                  style={{  display: 'inline-block' }}
+                />
               </div>
             )}
 
             {
               item.sender === 'protocol' && (
                 <div className="chat-message-bubble bot">
-                  <b>{title}</b> {item.message.replace(`${title}`, "")}
+                <TypeAnimation
+                  sequence={[
+                    title, 
+                    1000,
+
+                    () => {
+                      scrollDown();
+                    }
+                  ]}
+                  wrapper="span"
+                  cursor={false}
+                  repeat={Infinity}
+                  style={{  fontWeight: 'bold' }}
+                />
+                <TypeAnimation
+                  sequence={[
+                    item.message.replace(`${title}`, ""),
+                    1000,
+
+                    () => {
+                      scrollDown();
+                    }
+                  ]}
+                  wrapper="span"
+                  cursor={false}
+                  repeat={Infinity}
+                  style={{ display: 'inline-block' }}
+                />
               </div>
               )
             }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import axios from 'axios';
 import "./ChatApp.css";
+import { isDisabled } from '@testing-library/user-event/dist/utils';
 
 
 function ChatApp() {
@@ -33,16 +34,36 @@ function ChatApp() {
     return string;
   }
 
+  const controlTypingAnimation = (show) => {
+    scrollDown()
+    const att = document.createAttribute("style");
+    const typingClass = document.getElementById("typing");
+    if (show === 1) {
+      att.value = "display: block";
+    } else {
+      att.value = "display: none";
+    }
+    typingClass.setAttributeNode(att);
+  }
+
   const manageProtocol = async (message, status, details) => {
     let title = details.response.title
     setTitle(title)
     details = details.response.details;
     setProtocol(details);
     let text = createProtoclText(title, details);
-    setChat([...chat, { message, sender: 'user' }, { message: status, sender: 'bot' }])
-    await sleep(2.5 * 1000);
+    setChat([...chat, { message, sender: 'user' }])
     scrollDown();
-    setChat([...chat, {message: text, sender: 'protocol'}])
+    controlTypingAnimation(1)
+    await sleep(2.5 * 1000);
+    controlTypingAnimation(0);
+    setChat([...chat, { message, sender: 'user' }, { message: status, sender: 'bot' }])
+    scrollDown();
+    controlTypingAnimation(1)
+    await sleep(0.7 * 1000);
+    controlTypingAnimation(0)
+    scrollDown();
+    setChat([...chat, { message, sender: 'user' }, { message: status, sender: 'bot' },{message: text, sender: 'protocol'}])
     
   }
 
@@ -63,9 +84,16 @@ function ChatApp() {
     if (message === "restart") {
         setChat([{ message: response.data.response, sender: 'bot' }]);
     } else {
-      isProtocol(response.data.response) ? manageProtocol(message, response.data.response.response, response.data) : 
+      if (isProtocol(response.data.response)) {
+        manageProtocol(message, response.data.response.response, response.data)
+      } else {
+        setChat([...chat, { message: message, sender: 'user'  }]); 
+        controlTypingAnimation(1)
+        await sleep(2000);
+        controlTypingAnimation(0)
         setChat([...chat, { message: message, sender: 'user'  }, { message: response.data.response, sender: 'bot' }]); 
 
+      }
       setEnd(response.data.status);
     }
     setMessage('');
@@ -102,25 +130,6 @@ function ChatApp() {
    
 }, []);
 
-const callProtocol = (title, item) => {
-  return (
-    <TypeAnimation
-                  sequence={[
-                    item.message.replace(`${title}`, ""),
-                    1000,
-
-                    () => {
-                      scrollDown();
-                    }
-                  ]}
-                  deletionSpeed={60}
-                  wrapper="span"
-                  cursor={false}
-                  repeat={Infinity}
-                  style={{ display: 'inline-block' }}
-                />
-  )
-}
 
 return (
     <div className="chat-container">
@@ -135,7 +144,8 @@ return (
             )}
             {item.sender === 'bot' && (
               <div className="chat-message-bubble bot">
-                <TypeAnimation
+                {item.message}
+                {/* <TypeAnimation
                   sequence={[
                     item.message, 
                     1000, 
@@ -149,14 +159,15 @@ return (
                   cursor={false}
                   repeat={Infinity}
                   style={{  display: 'inline-block' }}
-                />
+                /> */}
               </div>
             )}
 
             {
               item.sender === 'protocol' && (
                 <div className="chat-message-bubble bot">
-                <TypeAnimation
+                  <b>{title}</b>
+                {/* <TypeAnimation
                   sequence={[
                     title, 
                     1000,
@@ -170,12 +181,12 @@ return (
                   cursor={false}
                   repeat={Infinity}
                   style={{  fontWeight: 'bold' }}
-                />
-
-              <TypeAnimation
+                /> */}
+                {item.message.replace(`${title}`, "")}
+              {/* <TypeAnimation
                   sequence={[
                     item.message.replace(`${title}`, ""),
-                    1000,
+                    10,
 
                     () => {
                       scrollDown();
@@ -187,13 +198,20 @@ return (
                   repeat={Infinity}
                   style={{ display: 'inline-block' }}
                 />
-                
+                 */}
               </div>
               )
             }
             
           </div>
         ))}
+
+            {/* typing effect */}
+        <div class="typing" id='typing'>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
         
       </div>
       {end === "end" && <div className="restart">

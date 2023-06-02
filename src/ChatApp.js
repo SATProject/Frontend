@@ -3,6 +3,7 @@ import { TypeAnimation } from 'react-type-animation';
 import axios from 'axios';
 import "./ChatApp.css";
 
+
 function ChatApp() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
@@ -19,6 +20,10 @@ function ChatApp() {
     return false;
   }
 
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   const createProtoclText = (title, details) => {
     let string = "";
     string += title + '\n\n';
@@ -28,13 +33,17 @@ function ChatApp() {
     return string;
   }
 
-  const manageProtocol = (message, status, details) => {
+  const manageProtocol = async (message, status, details) => {
     let title = details.response.title
     setTitle(title)
     details = details.response.details;
     setProtocol(details);
     let text = createProtoclText(title, details);
-    setChat([...chat, { message, sender: 'user' }, { message: status, sender: 'bot' }, { message: text, sender: 'protocol' }])
+    setChat([...chat, { message, sender: 'user' }, { message: status, sender: 'bot' }])
+    await sleep(2.5 * 1000);
+    scrollDown();
+    setChat([...chat, {message: text, sender: 'protocol'}])
+    
   }
 
   const scrollDown = () => {
@@ -47,6 +56,7 @@ function ChatApp() {
       sendMessage(e);
     }
   };
+
 
   const messageSet = async (message) => {
     const response = await axios.post('http://127.0.0.1:8000/api/', { "message": message });
@@ -161,7 +171,23 @@ return (
                   repeat={Infinity}
                   style={{  fontWeight: 'bold' }}
                 />
-                {setProtocol(title, item)}                
+
+              <TypeAnimation
+                  sequence={[
+                    item.message.replace(`${title}`, ""),
+                    1000,
+
+                    () => {
+                      scrollDown();
+                    }
+                  ]}
+                  deletionSpeed={90}
+                  wrapper="span"
+                  cursor={false}
+                  repeat={Infinity}
+                  style={{ display: 'inline-block' }}
+                />
+                
               </div>
               )
             }

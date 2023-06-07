@@ -133,7 +133,7 @@ function ChatApp() {
 
 return (
     <div className="chat-container">
-        <div className="chat-banner">sat bot</div>
+        <div className="chat-banner">بات دلبستگی به خود</div>
       <div className="chat-messages" id="chatm">
         {chat.map((item, index) => (
           <div key={index} className={`chat-message ${item.sender === 'user' ? 'chat-message-user' : ''}`}>
